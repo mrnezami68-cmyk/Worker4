@@ -1,0 +1,26 @@
+# ============================================================
+# Cloudflare Wrangler Config — Worker 4 (Security & Identity Gateway)
+# Module: Hardened Production Configuration v2.0
+# ============================================================
+name = "market-auth-gateway"
+main = "worker4-auth-gateway.js"
+compatibility_date = "2026-09-09"
+compatibility_flags = ["nodejs_compat"]
+
+# اتصال دیتابیس D1 اختصاصی هویت و امنیت (دیتابیس مجزا: market-auth-db)
+[[d1_databases]]
+binding = "DB"
+database_name = "market-auth-db"
+database_id = "<YOUR_MARKET_AUTH_D1_DATABASE_ID_HERE>"
+
+[vars]
+PBKDF2_ITERATIONS = 100000
+SESSION_MAX_AGE_SECONDS = 1209600 # 14 Days (1,209,600s)
+LOCKOUT_THRESHOLD = 5
+LOCKOUT_DURATION_SECONDS = 900 # 15 Minutes
+ALLOWED_ORIGINS = "https://dbai1.pages.dev,https://app.traderdiaries.com"
+
+# اسامی سکرت‌های الزامی جهت تنظیم با npx wrangler secret put:
+# 1. INTER_WORKER_SECRET          (کلید مشترک امضای HMAC بین ورکرها)
+# 2. SUPER_ADMIN_BREAKGLASS_SECRET (سکرت موقت بازیابی اضطراری سوپرادمین)
+# 3. SESSION_ENCRYPTION_KEY       (کلید رمزنگاری اختیاری)
